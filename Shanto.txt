@@ -1,0 +1,66 @@
+3.2 Non-Functional Requirements 
+Non-functional requirements describe qualities and characteristics that the system should satisfy. 
+The SRS guide identifies performance, safety, security, and quality as important categories. 
+3.2.1 Performance Requirements 
+NFR-01 
+The system should process user queries efficiently enough to provide a practical conversational 
+experience. 
+NFR-02 
+The retrieval system should use indexed information rather than processing all source documents 
+from the beginning for every query. 
+NFR-03 
+The system should provide reasonable response performance within the limitations of the 
+prototype environment. 
+3.2.2 Security Requirements 
+NFR-04 
+The system shall provide basic authentication for protected functionality. 
+NFR-05 
+The system shall apply role-based access restrictions for restricted information. 
+NFR-06 
+Administrator functions shall only be available to authorized administrators. 
+The proposal specifically includes basic authentication and role-based access control. 
+3.2.3 Accuracy and Quality Requirements 
+NFR-07 
+Generated answers should be based on retrieved institutional information. 
+NFR-08 
+The system should provide source references so users can verify generated answers. 
+NFR-09 
+The retrieval system should prioritize relevant university information. 
+NFR-10 
+The system should minimize unsupported responses by grounding LLM generation in retrieved 
+content. 
+Reducing hallucinations and providing source citations are stated objectives of the project. 
+3.2.4 Usability Requirements 
+NFR-11 
+The system shall provide a simple web-based conversational interface. 
+NFR-12 
+Users shall be able to ask questions using natural language. 
+NFR-13 
+The interface should be understandable to users with different levels of technical experience. 
+NFR-14 
+Source information should be presented clearly enough for users to verify the answer. 
+3.2.5 Reliability Requirements 
+NFR-15 
+The system should handle query-processing errors without causing the complete application to 
+fail. 
+NFR-16 
+The system should handle document-processing errors appropriately. 
+NFR-17 
+Source metadata should remain associated with the corresponding indexed content. 
+3.2.6 Maintainability Requirements 
+NFR-18 
+The system should maintain separate components for document ingestion, storage, retrieval, 
+reranking, generation, backend services, and frontend interaction. 
+NFR-19 
+Administrators should be able to maintain the indexed knowledge base. 
+NFR-20 
+The system should use the proposed development technologies so that the project can be 
+maintained and extended by the development team. 
+3.2.7 Safety Requirements 
+NFR-21 
+The system should not be used as an automatic decision-making system for university policies. 
+NFR-22 
+The system should present retrieved information as institutional information rather than 
+independently making university policy decisions. 
+Automatic policy decision-making is explicitly outside the scope of the project. 
+ 
