@@ -1,0 +1,173 @@
+2. Overall Description
+
+2.1 User Classes and Characteristics
+
+The system will support four main user classes.
+
+2.1.1 Current Students
+
+Current students will be one of the primary user groups.
+
+They may use the system to obtain information about:
+
+• Course rules
+• Examination schedules
+• Academic policies
+• University fees
+• Notices
+• Campus services
+• Other academic information
+
+Students may have different levels of technical knowledge, so the system should provide a simple conversational interface.
+
+2.1.2 Prospective Students
+
+Prospective students will use the system to find information about:
+
+• Admission requirements
+• Application deadlines
+• Academic programs
+• Tuition information
+• University contact details
+
+2.1.3 Faculty and Staff
+
+Faculty and staff will use the system to quickly access:
+
+• Institutional policies
+• Academic information
+• Frequently requested resources
+
+2.1.4 Administrators
+
+Administrators will manage and monitor the system.
+
+They will be responsible for:
+
+• Managing documents
+• Monitoring system usage
+• Inspecting errors
+• Monitoring system performance
+• Maintaining knowledge-base content
+
+
+2.2 User Needs
+
+Current Students
+
+Students need a quick way to find academic and administrative information without searching through many different webpages and documents.
+
+Prospective Students
+
+Prospective students need convenient access to admission, academic program, tuition, deadline, and contact information.
+
+Faculty and Staff
+
+Faculty and staff need quick access to institutional policies and frequently requested academic resources.
+
+Administrators
+
+Administrators need facilities for maintaining the knowledge base and monitoring system activity.
+
+General Information Need
+
+All users need relevant and understandable answers based on official university information.
+
+The system is intended to address information fragmentation, slow information discovery, and repetitive administrative queries.
+
+
+2.3 Operating Environment
+
+The system will operate as a web-based application.
+
+Frontend
+
+• HTML
+• CSS
+• JavaScript
+
+Backend
+
+• Python
+• FastAPI
+
+AI/NLP
+
+• Embedding Model
+• Large Language Model
+• Cross-Encoder Reranker
+
+Search
+
+• Dense Vector Retrieval
+• BM25
+• Reciprocal Rank Fusion
+
+Vector Database
+
+• Qdrant
+
+PDF Processing
+
+• PyMuPDF
+
+Web Parsing
+
+• BeautifulSoup
+
+Development Tools
+
+• Git
+• VS Code
+
+Operating System
+
+• Linux/Ubuntu
+
+
+2.4 Constraints
+
+The proposed system has the following constraints:
+
+1. The system will use a limited set of university websites and documents.
+
+2. The initial system will support English-language question answering.
+
+3. The system is intended as a prototype rather than a full university-scale production system.
+
+4. The system depends on the availability and quality of official university information.
+
+5. The system depends on the retrieved context for grounded answer generation.
+
+6. The system will use the technologies defined in the project proposal.
+
+7. The project will be developed within the planned eight-week implementation period.
+
+8. A multilingual voice assistant is outside the initial scope.
+
+9. Automatic policy decision-making is outside the initial scope.
+
+10. Integration with every university campus system is outside the initial scope.
+
+
+2.5 Assumptions
+
+The system development is based on the following assumptions:
+
+1. Official university websites and documents contain sufficient information for the selected queries.
+
+2. Selected webpages and documents will be accessible during data collection.
+
+3. Users will primarily submit questions in English.
+
+4. The collected documents can be processed using the selected tools.
+
+5. Administrators will maintain the knowledge base when information changes.
+
+6. Retrieved passages will provide sufficient information for grounded response generation.
+
+7. Users will access the system through a web browser.
+
+8. The selected technology stack will be available during development.
+
+9. The limited project dataset will be sufficient for prototype evaluation.
