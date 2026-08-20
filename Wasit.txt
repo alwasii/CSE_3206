@@ -1,0 +1,161 @@
+3. Requirements 
+3.1 Functional Requirements 
+The functional requirements describe the functions that the proposed system must perform. The 
+SRS guide recommends writing functional requirements in User Story format with a 
+confirmation part. 
+FR-01: Submit Natural-Language Question 
+User Story: 
+As a user, I want to enter a question in natural language so that I can search for university 
+information without using traditional keyword searches. 
+Confirmation: 
+The system shall provide a text input interface through which users can submit natural-language 
+questions. 
+FR-02: Process User Query 
+User Story: 
+As a user, I want my question to be processed by the system so that relevant university information 
+can be identified. 
+Confirmation: 
+The system shall receive and process the submitted question before performing retrieval. 
+FR-03: Perform Dense Retrieval 
+User Story: 
+As a user, I want the system to find information that is semantically related to my question even 
+when the exact words are different. 
+Confirmation: 
+The system shall perform dense vector retrieval using embeddings. 
+FR-04: Perform BM25 Retrieval 
+User Story: 
+As a user, I want the system to search for important keywords in my question so that relevant 
+documents can be found. 
+Confirmation: 
+The system shall perform BM25 keyword-based retrieval. 
+FR-05: Combine Retrieval Results 
+User Story: 
+As a user, I want different retrieval methods to be combined so that the system can improve 
+retrieval quality. 
+Confirmation: 
+The system shall combine dense retrieval and BM25 results using Reciprocal Rank Fusion (RRF). 
+FR-06: Rerank Retrieved Passages 
+User Story: 
+As a user, I want the most relevant retrieved passages to be prioritized so that the final answer is 
+based on useful information. 
+Confirmation: 
+The system shall apply a cross-encoder reranker to the retrieved passages. 
+FR-07: Select Relevant Context 
+User Story: 
+As a user, I want relevant information to be selected before answer generation so that the response 
+is related to my question. 
+Confirmation: 
+The system shall select relevant passages from the reranked retrieval results for use as generation 
+context. 
+FR-08: Generate Grounded Response 
+User Story: 
+As a user, I want my answer to be based on official university information so that the response is 
+grounded in institutional sources. 
+Confirmation: 
+The system shall provide retrieved university information to the LLM as context before generating 
+a response. 
+FR-09: Display Source Citation 
+User Story: 
+As a user, I want to know which university source was used to answer my question so that I can 
+verify the information. 
+Confirmation: 
+The system shall display source information associated with the retrieved content when generating 
+an answer. 
+Source citations are a defined objective and feature of the proposed system. 
+FR-10: Provide Conversational Interface 
+User Story: 
+As a user, I want to interact with the system through a conversational interface so that I can ask 
+questions naturally. 
+Confirmation: 
+The system shall provide a web-based conversational interface for submitting questions and 
+viewing answers. 
+FR-11: Process PDF Documents 
+User Story: 
+As an administrator, I want to process PDF documents so that university information stored in 
+PDFs can be searched. 
+Confirmation: 
+The system shall extract and process information from supported PDF documents. 
+FR-12: Process University Webpages 
+User Story: 
+As an administrator, I want to process university webpages so that web-based information can be 
+included in the knowledge base. 
+Confirmation: 
+The system shall extract and process information from selected HTML university webpages. 
+FR-13: Clean and Preprocess Content 
+User Story: 
+As an administrator, I want collected content to be cleaned before indexing so that irrelevant 
+content does not negatively affect retrieval. 
+Confirmation: 
+The system shall clean and preprocess extracted document and webpage content. 
+FR-14: Divide Content into Chunks 
+User Story: 
+As an administrator, I want large documents to be divided into searchable sections so that relevant 
+passages can be retrieved. 
+Confirmation: 
+The system shall divide processed content into suitable searchable chunks. 
+FR-15: Generate Embeddings 
+User Story: 
+As an administrator, I want document chunks to be converted into embeddings so that semantic 
+retrieval can be performed. 
+Confirmation: 
+The system shall generate embeddings for searchable content. 
+FR-16: Store Information in Qdrant 
+User Story: 
+As an administrator, I want processed information to be stored in a vector database so that it can 
+be retrieved efficiently. 
+Confirmation: 
+The system shall store generated embeddings and associated metadata in Qdrant. 
+The proposed architecture specifies Qdrant for vector storage and retrieval. 
+FR-17: Store Source Metadata 
+User Story: 
+As an administrator, I want source information to be associated with indexed content so that 
+retrieved information can be traced back to its origin. 
+Confirmation: 
+The system shall associate metadata with indexed content to identify the source document or 
+webpage. 
+FR-18: Authenticate Users 
+User 
+Story: 
+As a user, I want to authenticate when necessary so that restricted information can be protected. 
+Confirmation: 
+The system shall provide basic authentication functionality. 
+FR-19: Apply Role-Based Access 
+User Story: 
+As an administrator, I want different users to have different access permissions so that restricted 
+information is only available to authorized users. 
+Confirmation: 
+The system shall apply role-based access restrictions during information retrieval. 
+FR-20: Manage Documents 
+User Story: 
+As an administrator, I want to manage documents in the knowledge base so that university 
+information can be maintained. 
+Confirmation: 
+The system shall provide basic document-management functionality for administrators. 
+FR-21: Monitor Queries 
+User Story: 
+As an administrator, I want to monitor user queries so that system usage can be inspected. 
+Confirmation: 
+The system shall provide basic query monitoring. 
+FR-22: Monitor Errors 
+User Story: 
+As an administrator, I want to inspect system errors so that problems can be identified. 
+Confirmation: 
+The system shall provide basic error monitoring. 
+FR-23: Monitor System Performance 
+User Story: 
+As an administrator, I want to monitor system performance so that performance problems can be 
+identified. 
+Confirmation: 
+The system shall provide basic system-performance monitoring. 
+FR-24: Display Generated Answer 
+User Story: 
+As a user, I want to clearly see the answer to my question so that I can understand the retrieved 
+information. 
+Confirmation: 
+The system shall display the generated answer through the web interface. 
+FR-25: Support Evaluation 
+User Story: 
+As a project evaluator, I want the system to be evaluated using defined criteria so that the 
+effectiveness of the prototype can be measured. 
+Confirmation: 
+The system shall be evaluated based on retrieval quality, response groundedness, and usability. 
