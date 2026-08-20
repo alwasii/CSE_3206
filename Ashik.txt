@@ -1,155 +1,129 @@
-1. Introduction
-University websites have a huge amount of academic and administrative information such as
-admission requirements, course regulations, examinations, tuition fees, academic policies, notices
-and contacts. This information, however, is typically spread out among multiple webpages, PDFs,
-notices and departmental sections. This can lead to students, prospective students, faculty and staff
-spending a large amount of time searching for the information they require. In order to solve this
-problem of access to information, the following is proposed: The Production Based RAG System
-for University Websites is a conversational system which is web based. The system will enable
-users to ask questions in natural language, rather than having to comb through several resources
-at the university. It will be able to retrieve information from appropriate government university
-websites and documents and respond using retrieved information in a contextually appropriate
-and grounded way. The system will use a Retrieval-Augmented Generation (RAG) approach that
-combines information retrieval with Large Language Model (LLM)-based response generation.
-The retrieval process will employ semantic vector search, keyword-based search, Reciprocal Rank
-Fusion and cross-encoder reranking. This information will then be given as context to the LLM to
-produce the final response. The system will also give the users a reference point of the source from
-where they get information to check the information used to answer their questions. This Software
-Requirements Specification is a description of the requirements of the system to be designed. It
-explains the purpose of the system, who is going to use the system, how it will be used, what the
-system will produce, risk factors, operating environment, constraints, assumptions, functional
-requirements, and non-functional requirements. The SRS will be used as a shared reference by the
-four members of the project team when developing, integrating, testing and evaluating the system.
-The first system will be limited to a small set of university web sites and documents and will
-provide English language question answering. The project aims to deliver a prototype not a full
-production deployment to university.
-1.1 Purpose
-This Software Requirements Specification is intended to clarify the requirements for the
-Production Based RAG System for University Websites. The system proposed is a web-based
-conversational system that will enable users to ask queries on information about the university in
-natural language. The system will pull relevant information from selected official university
-websites, PDF documents, notices and academic documents to produce grounded responses.
-University information is spread out on many web pages, PDF documents, notices and department
-specific pages. This makes it harder and time consuming for students and other university
-stakeholders to find the specific information. The intended system would be a natural language
-approach to access this information. The SRS will identify the system's intended users,
-environment, constraints, assumptions, and functional and non-functional requirements of the
-proposed system.
-1.2 Intended Audience
-This SRS is intended for the following audiences:
-Developers
-Developers will use this document to understand the required functionality and technical behavior
-of the system.
-Testers
-Testers will use the requirements to verify whether the implemented system satisfies the specified
-requirements.
-Project Supervisors
-Project supervisors will use the SRS to understand the project's purpose, scope, users, and
-requirements.
-Project Team Members
-The four team members will use the SRS as a common reference while developing and integrating
-their assigned components.
-University Stakeholders
-University stakeholders can use the document to understand the purpose and expected
-functionality of the proposed system.
-1.3 Intended Use
-The system will be used as a conversational assistant to retrieve University information. Users will
-make queries using a "conversational" interface on the web. The system will be fed the question,
-retrieve the relevant information from the knowledge base, rerank the retrieved information, and
-pass the chosen context to a large language model (LLM). The LLM will produce an answer using
-information it has found in the institution. The system will also show how the source information
-has been used in the generation of the answer, which will enable users to check the information
-utilized.
-For example, a user may ask:
-"What are the requirements for admission to this program?"
-The system will retrieve relevant university documents or webpages and generate an answer based
-on those sources. The initial system will focus on English-language question answering.
-1.4 Product Scope
-The proposed product is a web-based conversational RAG system designed to provide access to
-university information.
-The system will collect information from selected official university websites and documents and
-transform the information into a searchable knowledge base.
-The system will support:
-
-
-
-
-
-
-
-University webpages
-PDF documents
-University notices
-Academic documents
-Natural-language question answering
-Hybrid information retrieval
-Semantic vector search
-
-BM25 keyword retrieval
-
-
-
-
-
-
-
-Reciprocal Rank Fusion
-Cross-encoder reranking
-LLM-based grounded generation
-Source citations
-Basic authentication
-Role-based access
-Basic administrator controls
-The project proposal defines the following features as being within scope:
-
-
-
-
-
-
-
-
-
-
-A limited set of university websites and documents
-English-language question answering
-Document ingestion
-Information retrieval
-RAG-based response generation
-Chat interface
-Source citations
-Basic authentication
-Basic administrator controls
-System testing and evaluation
-The following features are outside the initial scope:
-
-
-Full production deployment at university scale
-Multilingual voice assistant
-Automatic policy decision-making
-
-
-Integration with every university campus system
-1.5 Risk Definitions
-1.5.1 Incorrect Retrieval
-The system may retrieve irrelevant or incomplete information for a user's question.
-This could result in an answer that does not adequately address the user's question.
-1.5.2 Hallucinated Information
-The LLM may generate information that is not supported by the retrieved university sources.
-The system will reduce this risk by providing retrieved institutional information as context for
-generations and displaying source references.
-1.5.3 Outdated Information
-University policies, notices, fees, examination schedules, and other information may change over
-time.
-The administrator will need to maintain the indexed knowledge base so that information can be
-updated.
-1.5.4 Document Processing Errors
-PDF or webpage extraction may fail to correctly extract relevant information.
-The system will therefore use document extraction, cleaning, preprocessing, and chunking before
-indexing.
-1.5.5 Unauthorized Information Access
-Some information may be restricted according to user roles.
-The system will use basic authentication and role-based access control for restricted information.
-1.5.6 System Performance
-Large amounts of indexed information or multiple queries may affect system performance.
-The project will evaluate system performance as part of the overall prototype evaluation.
+Production-Based RAG (Retrieval
+Augmented Generation) System for 
+University Websites 
+1. Introduction 
+University websites have a huge amount of academic and administrative information such as 
+admission requirements, course regulations, examinations, tuition fees, academic policies, notices 
+and contacts. This information, however, is typically spread out among multiple webpages, PDFs, 
+notices and departmental sections. This can lead to students, prospective students, faculty and staff 
+spending a large amount of time searching for the information they require. In order to solve this 
+problem of access to information, the following is proposed: The Production Based RAG System 
+for University Websites is a conversational system which is web based. The system will enable 
+users to ask questions in natural language, rather than having to comb through several resources 
+at the university. It will be able to retrieve information from appropriate government university 
+websites and documents and respond using retrieved information in a contextually appropriate 
+and grounded way. The system will use a Retrieval-Augmented Generation (RAG) approach that 
+combines information retrieval with Large Language Model (LLM)-based response generation. 
+The retrieval process will employ semantic vector search, keyword-based search, Reciprocal Rank 
+Fusion and cross-encoder reranking. This information will then be given as context to the LLM to 
+produce the final response. The system will also give the users a reference point of the source from 
+where they get information to check the information used to answer their questions. This Software 
+Requirements Specification is a description of the requirements of the system to be designed. It 
+explains the purpose of the system, who is going to use the system, how it will be used, what the 
+system will produce, risk factors, operating environment, constraints, assumptions, functional 
+requirements, and non-functional requirements. The SRS will be used as a shared reference by the 
+four members of the project team when developing, integrating, testing and evaluating the system. 
+The first system will be limited to a small set of university web sites and documents and will 
+provide English language question answering. The project aims to deliver a prototype not a full 
+production deployment to university. 
+1.1 Purpose 
+This Software Requirements Specification is intended to clarify the requirements for the 
+Production Based RAG System for University Websites. The system proposed is a web-based 
+conversational system that will enable users to ask queries on information about the university in 
+natural language. The system will pull relevant information from selected official university 
+websites, PDF documents, notices and academic documents to produce grounded responses. 
+University information is spread out on many web pages, PDF documents, notices and department 
+specific pages. This makes it harder and time consuming for students and other university 
+stakeholders to find the specific information. The intended system would be a natural language 
+approach to access this information. The SRS will identify the system's intended users, 
+environment, constraints, assumptions, and functional and non-functional requirements of the 
+proposed system. 
+1.2 Intended Audience 
+This SRS is intended for the following audiences: 
+Developers 
+Developers will use this document to understand the required functionality and technical behavior 
+of the system. 
+Testers 
+Testers will use the requirements to verify whether the implemented system satisfies the specified 
+requirements. 
+Project Supervisors 
+Project supervisors will use the SRS to understand the project's purpose, scope, users, and 
+requirements. 
+Project Team Members 
+The four team members will use the SRS as a common reference while developing and integrating 
+their assigned components. 
+University Stakeholders 
+University stakeholders can use the document to understand the purpose and expected 
+functionality of the proposed system. 
+1.3 Intended Use 
+The system will be used as a conversational assistant to retrieve University information. Users will 
+make queries using a "conversational" interface on the web. The system will be fed the question, 
+retrieve the relevant information from the knowledge base, rerank the retrieved information, and 
+pass the chosen context to a large language model (LLM). The LLM will produce an answer using 
+information it has found in the institution. The system will also show how the source information 
+has been used in the generation of the answer, which will enable users to check the information 
+utilized. 
+For example, a user may ask: 
+"What are the requirements for admission to this program?" 
+The system will retrieve relevant university documents or webpages and generate an answer based 
+on those sources. The initial system will focus on English-language question answering. 
+1.4 Product Scope 
+The proposed product is a web-based conversational RAG system designed to provide access to 
+university information. 
+The system will collect information from selected official university websites and documents and 
+transform the information into a searchable knowledge base. 
+The system will support: 
+• University webpages 
+• PDF documents 
+• University notices 
+• Academic documents 
+• Natural-language question answering 
+• Hybrid information retrieval 
+• Semantic vector search 
+• BM25 keyword retrieval 
+• Reciprocal Rank Fusion 
+• Cross-encoder reranking 
+• LLM-based grounded generation 
+• Source citations 
+• Basic authentication 
+• Role-based access 
+• Basic administrator controls 
+The project proposal defines the following features as being within scope: 
+• A limited set of university websites and documents 
+• English-language question answering 
+• Document ingestion 
+• Information retrieval 
+• RAG-based response generation 
+• Chat interface 
+• Source citations 
+• Basic authentication 
+• Basic administrator controls 
+• System testing and evaluation 
+The following features are outside the initial scope: 
+• Full production deployment at university scale 
+• Multilingual voice assistant 
+• Automatic policy decision-making 
+• Integration with every university campus system 
+1.5 Risk Definitions 
+1.5.1 Incorrect Retrieval 
+The system may retrieve irrelevant or incomplete information for a user's question. 
+This could result in an answer that does not adequately address the user's question. 
+1.5.2 Hallucinated Information 
+The LLM may generate information that is not supported by the retrieved university sources. 
+The system will reduce this risk by providing retrieved institutional information as context for 
+generations and displaying source references. 
+1.5.3 Outdated Information 
+University policies, notices, fees, examination schedules, and other information may change over 
+time. 
+The administrator will need to maintain the indexed knowledge base so that information can be 
+updated. 
+1.5.4 Document Processing Errors 
+PDF or webpage extraction may fail to correctly extract relevant information. 
+The system will therefore use document extraction, cleaning, preprocessing, and chunking before 
+indexing. 
+1.5.5 Unauthorized Information Access 
+Some information may be restricted according to user roles. 
+The system will use basic authentication and role-based access control for restricted information. 
+1.5.6 System Performance 
+Large amounts of indexed information or multiple queries may affect system performance. 
+The project will evaluate system performance as part of the overall prototype evaluation. 
