@@ -1,0 +1,169 @@
+@startuml
+' Production-Based RAG System for University Websites - Class Diagram
+' Author: Fahim | Roll: 24524203101 | Sec-2 Overall Description + System-wide
+' Stack: FastAPI, Qdrant, PyMuPDF, BeautifulSoup | FR-01 to FR-25, NFR-01 to NFR-22
+title Production-Based RAG System - Class Diagram (Fahim 24524203101)
+
+abstract class User {
+  - id: String
+  - name: String
+  - email: String
+  - role: String
+  + login(): bool
+  + askQuestion(q: String): void
+}
+class Student {
+  - studentId: String
+  - program: String
+  + searchCourses(): void
+  + searchNotices(): void
+}
+class ProspectiveStudent {
+  - interestArea: String
+  + searchAdmission(): void
+  + searchTuition(): void
+}
+class FacultyStaff {
+  - department: String
+  - designation: String
+  + searchPolicy(): void
+}
+class Administrator {
+  - adminLevel: String
+  + manageDocs(): void
+  + monitorQueries(): void
+  + monitorErrors(): void
+}
+User <|-- Student
+User <|-- ProspectiveStudent
+User <|-- FacultyStaff
+User <|-- Administrator
+
+class Query {
+  - id: String
+  - text: String
+  - timestamp: DateTime
+  + getText(): String
+}
+class ChatInterface {
+  - sessionId: String
+  + submitQuestion(): void
+  + displayAnswer(): void
+}
+class RAGApplication {
+  - retriever: HybridRetriever
+  - generator: LLMGenerator
+  - vectorDB: QdrantVectorStore
+  + processQuery(q: String): Response
+  + retrieveDocs(q: String): List<DocumentChunk>
+  + generateAnswer(q: String, docs: List): Response
+}
+class AuthManager {
+  - users: Map<String,User>
+  + authenticate(): bool
+  + authorize(role: String): bool
+}
+class Response {
+  - id: String
+  - answer: String
+  - sources: List<Document>
+  + getAnswer(): String
+  + getSources(): List<Document>
+  + toJson(): String
+}
+User "1" --> "0..*" Query : creates
+Query "1" --> "1" RAGApplication : handled by
+ChatInterface --> RAGApplication : uses
+ChatInterface --> Response : displays
+RAGApplication ..> AuthManager : uses
+RAGApplication --> Response : returns
+
+class Document {
+  - id: String
+  - title: String
+  - content: String
+  - sourceType: String
+  - sourceURL: String
+  + getContent(): String
+  + getMetadata(): String
+}
+class DocumentProcessor {
+  - tools: String
+  + extractPDF(): String
+  + parseWeb(): String
+  + clean(): String
+  + chunk(): List<DocumentChunk>
+}
+class DocumentChunk {
+  - chunkId: String
+  - docId: String
+  - text: String
+  - embedding: Vector
+  + getText(): String
+}
+class EmbeddingModel {
+  - modelName: String
+  - dimension: int
+  + encode(text: String): Vector
+  + getDimension(): int
+}
+class QdrantVectorStore {
+  - collection: String
+  - dimension: int
+  + add(chunk: DocumentChunk): void
+  + search(vec: Vector, topK: int): List
+  + delete(id: String): void
+}
+Document "0..*" --> "1" DocumentProcessor : stored in
+DocumentProcessor "1" --> "*" DocumentChunk : creates
+EmbeddingModel ..> DocumentChunk : encodes
+DocumentChunk " *" --> "1" QdrantVectorStore : indexed
+EmbeddingModel ..> QdrantVectorStore : uses
+RAGApplication ..> DocumentProcessor : manages ingestion
+
+class HybridRetriever {
+  - topK: int
+  - vectorDB: QdrantVectorStore
+  - similarity: cosine
+  + denseSearch(q: String): List
+  + bm25Search(q: String): List
+  + fuseRRF(a: List, b: List): List
+}
+class CrossEncoderReranker {
+  - modelName: String
+  + rerank(q: String, docs: List): List
+  + selectContext(docs: List): List
+}
+class LLMGenerator {
+  - modelName: String
+  - promptTemplate: String
+  - maxTokens: int
+  + buildPrompt(q: String, docs: List): String
+  + generate(prompt: String): String
+  + formatResponse(): Response
+}
+class SystemMonitor {
+  - queryLogs: List
+  - errorLogs: List
+  + logQuery(): void
+  + logError(): void
+  + getMetrics(): String
+}
+class Evaluation {
+  - criteria: String
+  + evalRetrieval(): float
+  + evalGrounded(): float
+}
+QdrantVectorStore --> HybridRetriever : searches
+HybridRetriever --> CrossEncoderReranker : provides context
+CrossEncoderReranker --> LLMGenerator : provides context
+LLMGenerator "1" --> "1" Response : creates
+RAGApplication ..> SystemMonitor : monitored by
+Response ..> Evaluation : evaluated by
+
+note bottom
+Sec-2 (Fahim): 4 user classes + Frontend/Backend + Qdrant/PyMuPDF/BS4
+FR-01/02/10, FR-03~07, FR-08/09/24, FR-11~17, FR-18~23, FR-25
+NFR-04~06,15~17,18 covered. Replaces generic classdigram_wasit.png.
+end note
+@enduml
