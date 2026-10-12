@@ -6,3 +6,16 @@ settings = get_settings()
 
 _llm = None
 _groq_llm = None
+
+
+def get_openai_llm():
+    global _llm
+    if _llm is None:
+        if not settings.openai_api_key:
+            raise RuntimeError("OPENAI_API_KEY is missing")
+        _llm = ChatOpenAI(
+            model=settings.openai_model,
+            temperature=0,
+            api_key=settings.openai_api_key,
+        )
+    return _llm
