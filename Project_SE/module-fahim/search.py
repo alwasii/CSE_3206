@@ -19,3 +19,21 @@ def get_web_search():
             include_raw_content=False,
         )
     return _web_search
+
+
+def search_web(query: str) -> tuple[str, list[dict]]:
+    tool = get_web_search()
+    result = tool.invoke({"query": query})
+
+    lines, citations = [], []
+    if isinstance(result, dict):
+        if result.get("answer"):
+            lines.append("Search answer: " + result["answer"])
+        for item in result.get("results", []):
+            title, url, content = item.get("title", ""), item.get("url", ""), item.get("content", "")
+            lines.append(f"Title: {title}\nURL: {url}\nContent: {content}")
+            citations.append({"title": title or url, "url": url, "type": "web"})
+    else:
+        lines.append(str(result))
+
+    return "\n\n".join(lines), citations
