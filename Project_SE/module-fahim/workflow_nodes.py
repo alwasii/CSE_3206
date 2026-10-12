@@ -26,7 +26,7 @@ Return valid JSON like {{"route":"kb"}}.
 """)
     return {
         "source_used": decision.route,
-        "trace": add_trace(state, f"Router → {decision.route.upper()}"),
+        "trace": add_trace(state, f"Router \u2192 {decision.route.upper()}"),
     }
 
 
@@ -38,7 +38,7 @@ def retrieve_kb(state: AgentState) -> dict:
     docs = get_retriever().invoke(state["current_query"])
     return {
         "kb_docs": docs,
-        "trace": add_trace(state, f"Private KB retrieval → {len(docs)} chunks"),
+        "trace": add_trace(state, f"Private KB retrieval \u2192 {len(docs)} chunks"),
     }
 
 
@@ -57,7 +57,7 @@ Otherwise return weak. JSON: {{"grade":"good"}} or {{"grade":"weak"}}.
 """)
     return {
         "kb_grade": grade.grade,
-        "trace": add_trace(state, f"KB evidence grade → {grade.grade.upper()}"),
+        "trace": add_trace(state, f"KB evidence grade \u2192 {grade.grade.upper()}"),
     }
 
 
