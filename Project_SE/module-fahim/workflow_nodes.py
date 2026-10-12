@@ -32,3 +32,11 @@ Return valid JSON like {{"route":"kb"}}.
 
 def route_after_router(state: AgentState) -> Literal["retrieve_kb", "direct_answer"]:
     return "retrieve_kb" if state["source_used"] == "kb" else "direct_answer"
+
+
+def retrieve_kb(state: AgentState) -> dict:
+    docs = get_retriever().invoke(state["current_query"])
+    return {
+        "kb_docs": docs,
+        "trace": add_trace(state, f"Private KB retrieval → {len(docs)} chunks"),
+    }
