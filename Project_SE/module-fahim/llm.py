@@ -32,3 +32,9 @@ def get_groq_llm():
             api_key=settings.groq_api_key,
         )
     return _groq_llm
+
+
+def get_llm(provider: str = "openai"):
+    if provider == "groq":
+        return get_groq_llm()
+    return get_openai_llm()
