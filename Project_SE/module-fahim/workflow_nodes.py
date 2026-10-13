@@ -63,3 +63,13 @@ Otherwise return weak. JSON: {{"grade":"good"}} or {{"grade":"weak"}}.
 
 def after_kb(state: AgentState) -> Literal["generate_from_kb", "search_web"]:
     return "generate_from_kb" if state["kb_grade"] == "good" else "search_web"
+
+
+def search_web_node(state: AgentState) -> dict:
+    web_text, citations = search_web(state["current_query"])
+    return {
+        "web_results": web_text,
+        "citations": citations,
+        "source_used": "web",
+        "trace": add_trace(state, "Web fallback \u2192 Tavily search"),
+    }
