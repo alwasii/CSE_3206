@@ -53,7 +53,7 @@ Question: {state['question']}
 Private company KB evidence:
 {context}
 Return good only if the evidence is sufficient to answer confidently and specifically.
-Otherwise return weak. JSON: {{"grade":"good"}} or {{"grade":"weak"}}.
+Otherwise return weak. JSON: {{\"grade\":\"good\"}} or {{\"grade\":\"weak\"}}.
 """)
     return {
         "kb_grade": grade.grade,
