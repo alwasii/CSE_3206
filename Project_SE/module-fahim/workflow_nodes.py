@@ -73,3 +73,26 @@ def search_web_node(state: AgentState) -> dict:
         "source_used": "web",
         "trace": add_trace(state, "Web fallback \u2192 Tavily search"),
     }
+
+
+def grade_web(state: AgentState) -> dict:
+    grader = get_llm("groq").with_structured_output(EvidenceGrade, method="json_mode")
+    grade = grader.invoke(f"""
+Question: {state['question']}
+Web evidence:
+{state['web_results']}
+Return good if the evidence is sufficient and directly relevant; otherwise weak.
+Return valid JSON like {{\"grade\":\"good\"}}.
+""")
+    return {
+        "web_grade": grade.grade,
+        "trace": add_trace(state, f"Web evidence grade \u2192 {grade.grade.upper()}"),
+    }
+
+
+def after_web(state: AgentState) -> Literal["generate_from_web", "rewrite_query", "insufficient"]:
+    if state["web_grade"] == "good":
+        return "generate_from_web"
+    if state["retry_count"] < settings.max_retries:
+        return "rewrite_query"
+    return "insufficient"
