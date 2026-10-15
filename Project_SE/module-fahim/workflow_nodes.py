@@ -14,6 +14,9 @@ def add_trace(state: AgentState, message: str) -> list[str]:
     return [*state.get("trace", []), message]
 
 
+# --- Stage 1: routing (kb vs direct) ---
+
+
 def route_question(state: AgentState) -> dict:
     router = get_llm("groq").with_structured_output(RouteDecision, method="json_mode")
     decision = router.invoke(f"""
@@ -32,6 +35,9 @@ Return valid JSON like {{"route":"kb"}}.
 
 def route_after_router(state: AgentState) -> Literal["retrieve_kb", "direct_answer"]:
     return "retrieve_kb" if state["source_used"] == "kb" else "direct_answer"
+
+
+# --- Stage 2: private KB retrieval + grading ---
 
 
 def retrieve_kb(state: AgentState) -> dict:
@@ -63,6 +69,9 @@ Otherwise return weak. JSON: {{\"grade\":\"good\"}} or {{\"grade\":\"weak\"}}.
 
 def after_kb(state: AgentState) -> Literal["generate_from_kb", "search_web"]:
     return "generate_from_kb" if state["kb_grade"] == "good" else "search_web"
+
+
+# --- Stage 3: web fallback + rewrite loop ---
 
 
 def search_web_node(state: AgentState) -> dict:
@@ -111,6 +120,9 @@ Question: {state['question']}
     }
 
 
+# --- Stage 4: grounded answer generation ---
+
+
 def generate_from_kb(state: AgentState) -> dict:
     context = "\n\n".join(
         f"[Source: {d.metadata.get('source', 'unknown')}]\n{d.page_content}" for d in state["kb_docs"]
@@ -153,6 +165,9 @@ Web evidence:
         "source_used": "web_search",
         "trace": add_trace(state, "Answer generation \u2192 WEB SEARCH"),
     }
+
+
+# --- Stage 5: direct + insufficient fallbacks ---
 
 
 def direct_answer(state: AgentState) -> dict:
