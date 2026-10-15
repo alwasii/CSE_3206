@@ -13,7 +13,7 @@ def get_web_search():
     global _web_search
     if _web_search is None:
         if not settings.tavily_api_key:
-            raise RuntimeError("TAVILY_API_KEY is missing")
+            raise RuntimeError("TAVILY_API_KEY is missing (see module-fahim .env.example)")
         _web_search = TavilySearch(
             tavily_api_key=settings.tavily_api_key,
             max_results=5,

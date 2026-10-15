@@ -15,7 +15,7 @@ def get_openai_llm():
     global _llm
     if _llm is None:
         if not settings.openai_api_key:
-            raise RuntimeError("OPENAI_API_KEY is missing")
+            raise RuntimeError("OPENAI_API_KEY is missing (see module-fahim .env.example)")
         _llm = ChatOpenAI(
             model=settings.openai_model,
             temperature=0,
@@ -29,7 +29,7 @@ def get_groq_llm():
     global _groq_llm
     if _groq_llm is None:
         if not settings.groq_api_key:
-            raise RuntimeError("GROQ_API_KEY is missing")
+            raise RuntimeError("GROQ_API_KEY is missing (see module-fahim .env.example)")
         _groq_llm = ChatGroq(
             model=settings.groq_model,
             temperature=0,
