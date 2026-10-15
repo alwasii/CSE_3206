@@ -14,6 +14,9 @@ def add_trace(state: AgentState, message: str) -> list[str]:
     return [*state.get("trace", []), message]
 
 
+# --- Stage 1: routing (kb vs direct) ---
+
+
 def route_question(state: AgentState) -> dict:
     router = get_llm("groq").with_structured_output(RouteDecision, method="json_mode")
     decision = router.invoke(f"""
@@ -34,8 +37,12 @@ def route_after_router(state: AgentState) -> Literal["retrieve_kb", "direct_answ
     return "retrieve_kb" if state["source_used"] == "kb" else "direct_answer"
 
 
+# --- Stage 2: private KB retrieval + grading ---
+
+
 def retrieve_kb(state: AgentState) -> dict:
     docs = get_retriever().invoke(state["current_query"])
+    logger.debug("retrieved %d chunks for query: %s", len(docs), state["current_query"])
     return {
         "kb_docs": docs,
         "trace": add_trace(state, f"Private KB retrieval \u2192 {len(docs)} chunks"),
@@ -65,8 +72,12 @@ def after_kb(state: AgentState) -> Literal["generate_from_kb", "search_web"]:
     return "generate_from_kb" if state["kb_grade"] == "good" else "search_web"
 
 
+# --- Stage 3: web fallback + rewrite loop ---
+
+
 def search_web_node(state: AgentState) -> dict:
     web_text, citations = search_web(state["current_query"])
+    logger.debug("web search returned %d citations", len(citations))
     return {
         "web_results": web_text,
         "citations": citations,
@@ -96,3 +107,83 @@ def after_web(state: AgentState) -> Literal["generate_from_web", "rewrite_query"
     if state["retry_count"] < settings.max_retries:
         return "rewrite_query"
     return "insufficient"
+
+
+def rewrite_query(state: AgentState) -> dict:
+    rewritten = get_llm("groq").invoke(f"""
+Rewrite this IT support question for better private knowledge retrieval and vendor web search.
+Preserve intent, add useful technical keywords, do not answer, return only the query.
+Question: {state['question']}
+""").content.strip()
+    return {
+        "current_query": rewritten,
+        "retry_count": state["retry_count"] + 1,
+        "trace": add_trace(state, f"Query rewrite \u2192 {rewritten}"),
+    }
+
+
+# --- Stage 4: grounded answer generation ---
+
+
+def generate_from_kb(state: AgentState) -> dict:
+    context = "\n\n".join(
+        f"[Source: {d.metadata.get('source', 'unknown')}]\n{d.page_content}" for d in state["kb_docs"]
+    )
+    answer = get_llm("groq").invoke(f"""
+You are an enterprise IT support copilot. Answer ONLY from the private company KB below.
+Be concise, actionable, and safe. If steps are present, present them clearly.
+Do not invent policy details. Mention that the answer is based on the company's private knowledge base.
+Question: {state['question']}
+
+Private KB:
+{context}
+""").content
+    citations = []
+    seen = set()
+    for d in state["kb_docs"]:
+        src = d.metadata.get("source", "Private KB")
+        if src not in seen:
+            seen.add(src)
+            citations.append({"title": src.split("/")[-1], "url": "", "type": "private_kb"})
+    return {
+        "answer": answer,
+        "source_used": "private_kb",
+        "citations": citations,
+        "trace": add_trace(state, "Answer generation \u2192 PRIVATE KB"),
+    }
+
+
+def generate_from_web(state: AgentState) -> dict:
+    answer = get_llm("groq").invoke(f"""
+You are an enterprise IT support copilot. The private company KB was insufficient.
+Answer ONLY from the web evidence below. Clearly say this is external web information and may need IT validation before changing company-managed systems.
+Question: {state['question']}
+
+Web evidence:
+{state['web_results']}
+""").content
+    return {
+        "answer": answer,
+        "source_used": "web_search",
+        "trace": add_trace(state, "Answer generation \u2192 WEB SEARCH"),
+    }
+
+
+# --- Stage 5: direct + insufficient fallbacks ---
+
+
+def direct_answer(state: AgentState) -> dict:
+    answer = get_llm("groq").invoke(f"Respond briefly and naturally to: {state['question']}").content
+    return {
+        "answer": answer,
+        "source_used": "direct",
+        "trace": add_trace(state, "Direct response \u2192 no retrieval"),
+    }
+
+
+def insufficient(state: AgentState) -> dict:
+    return {
+        "answer": "I couldn't find enough reliable evidence in the company knowledge base or external search to answer confidently. Please contact the IT help desk or provide more details.",
+        "source_used": "insufficient_evidence",
+        "trace": add_trace(state, "Stopped \u2192 insufficient reliable evidence"),
+    }

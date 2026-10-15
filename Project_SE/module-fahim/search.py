@@ -1,16 +1,19 @@
 from langchain_tavily import TavilySearch
 from module_1.config import get_settings
 
+"""Web-search fallback for module-3: Tavily client plus citation parsing."""
+
 settings = get_settings()
 
 _web_search = None
 
 
 def get_web_search():
+    """Return the shared Tavily search tool (created on first use)."""
     global _web_search
     if _web_search is None:
         if not settings.tavily_api_key:
-            raise RuntimeError("TAVILY_API_KEY is missing")
+            raise RuntimeError("TAVILY_API_KEY is missing (see module-fahim .env.example)")
         _web_search = TavilySearch(
             tavily_api_key=settings.tavily_api_key,
             max_results=5,
@@ -22,6 +25,7 @@ def get_web_search():
 
 
 def search_web(query: str) -> tuple[str, list[dict]]:
+    """Run a web search and return (evidence text, citation list)."""
     tool = get_web_search()
     result = tool.invoke({"query": query})
 
