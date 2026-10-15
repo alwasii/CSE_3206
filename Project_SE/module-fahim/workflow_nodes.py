@@ -153,3 +153,20 @@ Web evidence:
         "source_used": "web_search",
         "trace": add_trace(state, "Answer generation \u2192 WEB SEARCH"),
     }
+
+
+def direct_answer(state: AgentState) -> dict:
+    answer = get_llm("groq").invoke(f"Respond briefly and naturally to: {state['question']}").content
+    return {
+        "answer": answer,
+        "source_used": "direct",
+        "trace": add_trace(state, "Direct response \u2192 no retrieval"),
+    }
+
+
+def insufficient(state: AgentState) -> dict:
+    return {
+        "answer": "I couldn't find enough reliable evidence in the company knowledge base or external search to answer confidently. Please contact the IT help desk or provide more details.",
+        "source_used": "insufficient_evidence",
+        "trace": add_trace(state, "Stopped \u2192 insufficient reliable evidence"),
+    }
