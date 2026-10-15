@@ -96,3 +96,16 @@ def after_web(state: AgentState) -> Literal["generate_from_web", "rewrite_query"
     if state["retry_count"] < settings.max_retries:
         return "rewrite_query"
     return "insufficient"
+
+
+def rewrite_query(state: AgentState) -> dict:
+    rewritten = get_llm("groq").invoke(f"""
+Rewrite this IT support question for better private knowledge retrieval and vendor web search.
+Preserve intent, add useful technical keywords, do not answer, return only the query.
+Question: {state['question']}
+""").content.strip()
+    return {
+        "current_query": rewritten,
+        "retry_count": state["retry_count"] + 1,
+        "trace": add_trace(state, f"Query rewrite \u2192 {rewritten}"),
+    }
