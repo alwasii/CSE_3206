@@ -42,6 +42,7 @@ def route_after_router(state: AgentState) -> Literal["retrieve_kb", "direct_answ
 
 def retrieve_kb(state: AgentState) -> dict:
     docs = get_retriever().invoke(state["current_query"])
+    logger.debug("retrieved %d chunks for query: %s", len(docs), state["current_query"])
     return {
         "kb_docs": docs,
         "trace": add_trace(state, f"Private KB retrieval \u2192 {len(docs)} chunks"),
@@ -76,6 +77,7 @@ def after_kb(state: AgentState) -> Literal["generate_from_kb", "search_web"]:
 
 def search_web_node(state: AgentState) -> dict:
     web_text, citations = search_web(state["current_query"])
+    logger.debug("web search returned %d citations", len(citations))
     return {
         "web_results": web_text,
         "citations": citations,
