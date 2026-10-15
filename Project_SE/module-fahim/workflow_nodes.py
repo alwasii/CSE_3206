@@ -137,3 +137,19 @@ Private KB:
         "citations": citations,
         "trace": add_trace(state, "Answer generation \u2192 PRIVATE KB"),
     }
+
+
+def generate_from_web(state: AgentState) -> dict:
+    answer = get_llm("groq").invoke(f"""
+You are an enterprise IT support copilot. The private company KB was insufficient.
+Answer ONLY from the web evidence below. Clearly say this is external web information and may need IT validation before changing company-managed systems.
+Question: {state['question']}
+
+Web evidence:
+{state['web_results']}
+""").content
+    return {
+        "answer": answer,
+        "source_used": "web_search",
+        "trace": add_trace(state, "Answer generation \u2192 WEB SEARCH"),
+    }
