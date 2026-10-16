@@ -14,6 +14,17 @@ def add_trace(state: AgentState, message: str) -> list[str]:
     return [*state.get("trace", []), message]
 
 
+def _dedupe_kb_citations(docs) -> list[dict]:
+    """Collapse KB chunk sources into one citation per unique source."""
+    citations, seen = [], set()
+    for d in docs:
+        src = d.metadata.get("source", "Private KB")
+        if src not in seen:
+            seen.add(src)
+            citations.append({"title": src.split("/")[-1], "url": "", "type": "private_kb"})
+    return citations
+
+
 # --- Stage 1: routing (kb vs direct) ---
 
 
@@ -144,13 +155,7 @@ Question: {state['question']}
 Private KB:
 {context}
 """).content
-    citations = []
-    seen = set()
-    for d in state["kb_docs"]:
-        src = d.metadata.get("source", "Private KB")
-        if src not in seen:
-            seen.add(src)
-            citations.append({"title": src.split("/")[-1], "url": "", "type": "private_kb"})
+    citations = _dedupe_kb_citations(state["kb_docs"])
     return {
         "answer": answer,
         "source_used": "private_kb",
