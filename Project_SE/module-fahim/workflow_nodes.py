@@ -96,6 +96,7 @@ def after_kb(state: AgentState) -> Literal["generate_from_kb", "search_web"]:
 
 
 def search_web_node(state: AgentState) -> dict:
+    """Run the Tavily web fallback when KB evidence is weak."""
     web_text, citations = search_web(state["current_query"])
     logger.debug("web search returned %d citations", len(citations))
     return {
@@ -130,6 +131,7 @@ def after_web(state: AgentState) -> Literal["generate_from_web", "rewrite_query"
 
 
 def rewrite_query(state: AgentState) -> dict:
+    """Rewrite the query for another retrieval round and bump retry count."""
     rewritten = get_llm("groq").invoke(f"""
 Rewrite this IT support question for better private knowledge retrieval and vendor web search.
 Preserve intent, add useful technical keywords, do not answer, return only the query.
@@ -146,6 +148,7 @@ Question: {state['question']}
 
 
 def generate_from_kb(state: AgentState) -> dict:
+    """Generate a grounded answer strictly from private KB evidence."""
     context = "\n\n".join(
         f"[Source: {d.metadata.get('source', 'unknown')}]\n{d.page_content}" for d in state["kb_docs"]
     )
@@ -168,6 +171,7 @@ Private KB:
 
 
 def generate_from_web(state: AgentState) -> dict:
+    """Generate an answer strictly from web evidence with a validation warning."""
     answer = get_llm("groq").invoke(f"""
 You are an enterprise IT support copilot. The private company KB was insufficient.
 Answer ONLY from the web evidence below. Clearly say this is external web information and may need IT validation before changing company-managed systems.
