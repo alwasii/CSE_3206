@@ -14,10 +14,28 @@ def add_trace(state: AgentState, message: str) -> list[str]:
     return [*state.get("trace", []), message]
 
 
+def _dedupe_kb_citations(docs) -> list[dict]:
+    """Collapse KB chunk sources into one citation per unique source."""
+    citations, seen = [], set()
+    for d in docs:
+        src = d.metadata.get("source", "Private KB")
+        if src not in seen:
+            seen.add(src)
+            citations.append({"title": src.split("/")[-1], "url": "", "type": "private_kb"})
+    return citations
+
+
 # --- Stage 1: routing (kb vs direct) ---
 
 
 def route_question(state: AgentState) -> dict:
+    """Classify the question as KB-backed ('kb') or casual ('direct')."""
+    question = (state.get("question") or "").strip()
+    if not question:
+        return {
+            "source_used": "direct",
+            "trace": add_trace(state, "Router \u2192 DIRECT (empty question)"),
+        }
     router = get_llm("groq").with_structured_output(RouteDecision, method="json_mode")
     decision = router.invoke(f"""
 You route messages for an enterprise IT support assistant.
@@ -41,6 +59,7 @@ def route_after_router(state: AgentState) -> Literal["retrieve_kb", "direct_answ
 
 
 def retrieve_kb(state: AgentState) -> dict:
+    """Pull top-k private KB chunks for the current query."""
     docs = get_retriever().invoke(state["current_query"])
     logger.debug("retrieved %d chunks for query: %s", len(docs), state["current_query"])
     return {
@@ -50,6 +69,7 @@ def retrieve_kb(state: AgentState) -> dict:
 
 
 def grade_kb(state: AgentState) -> dict:
+    """Grade KB evidence 'good' (answerable) or 'weak' (fall back to web)."""
     grader = get_llm("groq").with_structured_output(EvidenceGrade, method="json_mode")
     context = "\n\n".join(
         f"Source: {d.metadata.get('source', 'unknown')}\n{d.page_content}" for d in state["kb_docs"]
@@ -76,6 +96,7 @@ def after_kb(state: AgentState) -> Literal["generate_from_kb", "search_web"]:
 
 
 def search_web_node(state: AgentState) -> dict:
+    """Run the Tavily web fallback when KB evidence is weak."""
     web_text, citations = search_web(state["current_query"])
     logger.debug("web search returned %d citations", len(citations))
     return {
@@ -110,6 +131,7 @@ def after_web(state: AgentState) -> Literal["generate_from_web", "rewrite_query"
 
 
 def rewrite_query(state: AgentState) -> dict:
+    """Rewrite the query for another retrieval round and bump retry count."""
     rewritten = get_llm("groq").invoke(f"""
 Rewrite this IT support question for better private knowledge retrieval and vendor web search.
 Preserve intent, add useful technical keywords, do not answer, return only the query.
@@ -126,6 +148,7 @@ Question: {state['question']}
 
 
 def generate_from_kb(state: AgentState) -> dict:
+    """Generate a grounded answer strictly from private KB evidence."""
     context = "\n\n".join(
         f"[Source: {d.metadata.get('source', 'unknown')}]\n{d.page_content}" for d in state["kb_docs"]
     )
@@ -138,13 +161,7 @@ Question: {state['question']}
 Private KB:
 {context}
 """).content
-    citations = []
-    seen = set()
-    for d in state["kb_docs"]:
-        src = d.metadata.get("source", "Private KB")
-        if src not in seen:
-            seen.add(src)
-            citations.append({"title": src.split("/")[-1], "url": "", "type": "private_kb"})
+    citations = _dedupe_kb_citations(state["kb_docs"])
     return {
         "answer": answer,
         "source_used": "private_kb",
@@ -154,6 +171,7 @@ Private KB:
 
 
 def generate_from_web(state: AgentState) -> dict:
+    """Generate an answer strictly from web evidence with a validation warning."""
     answer = get_llm("groq").invoke(f"""
 You are an enterprise IT support copilot. The private company KB was insufficient.
 Answer ONLY from the web evidence below. Clearly say this is external web information and may need IT validation before changing company-managed systems.

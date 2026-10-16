@@ -10,7 +10,7 @@ _llm = None
 _groq_llm = None
 
 
-def get_openai_llm():
+def get_openai_llm() -> ChatOpenAI:
     """Return the shared OpenAI chat model (created on first use)."""
     global _llm
     if _llm is None:
@@ -24,7 +24,7 @@ def get_openai_llm():
     return _llm
 
 
-def get_groq_llm():
+def get_groq_llm() -> ChatGroq:
     """Return the shared Groq chat model (created on first use)."""
     global _groq_llm
     if _groq_llm is None:
