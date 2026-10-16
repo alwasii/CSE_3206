@@ -18,6 +18,12 @@ def add_trace(state: AgentState, message: str) -> list[str]:
 
 
 def route_question(state: AgentState) -> dict:
+    question = (state.get("question") or "").strip()
+    if not question:
+        return {
+            "source_used": "direct",
+            "trace": add_trace(state, "Router \u2192 DIRECT (empty question)"),
+        }
     router = get_llm("groq").with_structured_output(RouteDecision, method="json_mode")
     decision = router.invoke(f"""
 You route messages for an enterprise IT support assistant.
