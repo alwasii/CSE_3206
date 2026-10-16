@@ -29,6 +29,7 @@ def _dedupe_kb_citations(docs) -> list[dict]:
 
 
 def route_question(state: AgentState) -> dict:
+    """Classify the question as KB-backed ('kb') or casual ('direct')."""
     question = (state.get("question") or "").strip()
     if not question:
         return {
@@ -58,6 +59,7 @@ def route_after_router(state: AgentState) -> Literal["retrieve_kb", "direct_answ
 
 
 def retrieve_kb(state: AgentState) -> dict:
+    """Pull top-k private KB chunks for the current query."""
     docs = get_retriever().invoke(state["current_query"])
     logger.debug("retrieved %d chunks for query: %s", len(docs), state["current_query"])
     return {
@@ -67,6 +69,7 @@ def retrieve_kb(state: AgentState) -> dict:
 
 
 def grade_kb(state: AgentState) -> dict:
+    """Grade KB evidence 'good' (answerable) or 'weak' (fall back to web)."""
     grader = get_llm("groq").with_structured_output(EvidenceGrade, method="json_mode")
     context = "\n\n".join(
         f"Source: {d.metadata.get('source', 'unknown')}\n{d.page_content}" for d in state["kb_docs"]
