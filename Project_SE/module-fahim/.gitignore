@@ -1,0 +1,6 @@
+# local secrets and caches — never commit
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
