@@ -13,6 +13,15 @@ Fahim 24524203101 | Ported from `Agentic-RAG-System/modules/module_3/`
 1. Copy `.env.example` to `.env` and fill `OPENAI_API_KEY`, `GROQ_API_KEY`, `TAVILY_API_KEY`.
 2. Keep the sibling-package import style (`module_1`, `module_2`, ...) — see `NOTES.md`.
 
+## Docs
+
+- `NOTES.md` — design decisions (why Groq for routing, fallback chain, citations)
+- `FLOW.md` — mermaid workflow diagram and node table
+- `API.md` — function signatures and which state keys each node writes
+- `PROMPTS.md` — every prompt used, with the grounding rule
+- `ERRORS.md` — raised errors, soft failures, debugging
+- `CHANGELOG.md` — what landed in each PR
+
 ## Flow
 
 route_question → retrieve_kb → grade_kb → generate_from_kb (good) or
