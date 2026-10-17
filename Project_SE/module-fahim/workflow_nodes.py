@@ -52,7 +52,7 @@ Return valid JSON like {{"route":"kb"}}.
 
 
 def route_after_router(state: AgentState) -> Literal["retrieve_kb", "direct_answer"]:
-    return "retrieve_kb" if state["source_used"] == "kb" else "direct_answer"
+    return "retrieve_kb" if state.get("source_used") == "kb" else "direct_answer"
 
 
 # --- Stage 2: private KB retrieval + grading ---
@@ -89,7 +89,9 @@ Otherwise return weak. JSON: {{\"grade\":\"good\"}} or {{\"grade\":\"weak\"}}.
 
 
 def after_kb(state: AgentState) -> Literal["generate_from_kb", "search_web"]:
-    return "generate_from_kb" if state["kb_grade"] == "good" else "search_web"
+    if state.get("kb_grade") == "good":
+        return "generate_from_kb"
+    return "search_web"
 
 
 # --- Stage 3: web fallback + rewrite loop ---
@@ -123,9 +125,9 @@ Return valid JSON like {{\"grade\":\"good\"}}.
 
 
 def after_web(state: AgentState) -> Literal["generate_from_web", "rewrite_query", "insufficient"]:
-    if state["web_grade"] == "good":
+    if state.get("web_grade") == "good":
         return "generate_from_web"
-    if state["retry_count"] < settings.max_retries:
+    if state.get("retry_count", 0) < settings.max_retries:
         return "rewrite_query"
     return "insufficient"
 
