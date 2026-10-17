@@ -20,6 +20,7 @@ Fahim 24524203101 | Ported from `Agentic-RAG-System/modules/module_3/`
 - `API.md` — function signatures and which state keys each node writes
 - `PROMPTS.md` — every prompt used, with the grounding rule
 - `ERRORS.md` — raised errors, soft failures, debugging
+- `EXAMPLE.md` — two-query worked walkthrough with traces
 - `CHANGELOG.md` — what landed in each PR
 
 ## Flow
