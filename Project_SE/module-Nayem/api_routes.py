@@ -43,13 +43,5 @@ async def ingest(file: UploadFile = File(...), x_admin_key: str = Header(default
     upload_dir = Path(settings.upload_dir)
     upload_dir.mkdir(parents=True, exist_ok=True)
     dest = upload_dir / Path(file.filename).name
-    dest.write_bytes(await file.read())
-    docs = load_file(dest)
-    chunks = chunk_documents(docs)
-    ids = add_documents(chunks)
-    return IngestResponse(
-        message="Document indexed",
-        file=dest.name,
-        chunks=len(chunks),
-        ids_created=len(ids),
+  
     )
