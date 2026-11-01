@@ -9,16 +9,6 @@ settings = get_settings()
 _vectorstore = None
 
 
-def ensure_index():
-    if not settings.pinecone_api_key:
-        raise RuntimeError("PINECONE_API_KEY is missing")
-
-    desired_dimension = get_embedding_dimension()
-    pc = Pinecone(api_key=settings.pinecone_api_key)
-    names = [x["name"] for x in pc.list_indexes()]
-
- 
-  
 
 
 
