@@ -41,17 +41,5 @@ def ensure_index():
     return pc.Index(settings.pinecone_index_name)
 
 
-def get_vectorstore():
-    global _vectorstore
-    if _vectorstore is None:
-        index = ensure_index()
-        _vectorstore = PineconeVectorStore(
-            index=index,
-            embedding=get_embeddings(),
-            namespace=settings.pinecone_namespace,
-        )
-    return _vectorstore
-
-
 
 
