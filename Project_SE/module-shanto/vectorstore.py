@@ -28,18 +28,7 @@ def ensure_index():
             while settings.pinecone_index_name in [x["name"] for x in pc.list_indexes()]:
                 time.sleep(1)
 
-    if settings.pinecone_index_name not in [x["name"] for x in pc.list_indexes()]:
-        pc.create_index(
-            name=settings.pinecone_index_name,
-            dimension=desired_dimension,
-            metric="cosine",
-            spec=ServerlessSpec(cloud="aws", region="us-east-1"),
-        )
-        while not pc.describe_index(settings.pinecone_index_name).status["ready"]:
-            time.sleep(1)
-
-    return pc.Index(settings.pinecone_index_name)
-
+  
 
 
 
