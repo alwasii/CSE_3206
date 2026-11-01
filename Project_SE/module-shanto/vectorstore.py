@@ -17,17 +17,7 @@ def ensure_index():
     pc = Pinecone(api_key=settings.pinecone_api_key)
     names = [x["name"] for x in pc.list_indexes()]
 
-    if settings.pinecone_index_name in names:
-        index_info = pc.describe_index(settings.pinecone_index_name)
-        current_dimension = getattr(index_info, "dimension", None)
-        if current_dimension is None and isinstance(index_info, dict):
-            current_dimension = index_info.get("dimension")
-
-        if current_dimension is not None and current_dimension != desired_dimension:
-            pc.delete_index(name=settings.pinecone_index_name)
-            while settings.pinecone_index_name in [x["name"] for x in pc.list_indexes()]:
-                time.sleep(1)
-
+ 
   
 
 
